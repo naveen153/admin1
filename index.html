@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Naveen | Middleware & Cloud Expert</title>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;500;600;700&family=Share+Tech+Mono&family=Exo+2:wght@200;400;700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #080c14;
+    --bg2: #0d1322;
+    --accent: #00d4ff;
+    --accent2: #ff6b35;
+    --accent3: #7fff6b;
+    --text: #c8d8e8;
+    --text-dim: #5a7a9a;
+    --border: rgba(0,212,255,0.2);
+    --glow: 0 0 20px rgba(0,212,255,0.3);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Exo 2', sans-serif;
+    overflow-x: hidden;
+  }
+
+  /* Grid background */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0,212,255,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,212,255,0.03) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* Animated top bar */
+  .top-bar {
+    height: 3px;
+    background: linear-gradient(90deg, transparent, var(--accent), var(--accent2), var(--accent3), transparent);
+    background-size: 200% 100%;
+    animation: slide 3s linear infinite;
+  }
+  @keyframes slide { 0%{background-position:0%} 100%{background-position:200%} }
+
+  /* Nav */
+  nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(8,12,20,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 60px;
+  }
+  .nav-logo {
+    font-family: 'Share Tech Mono', monospace;
+    color: var(--accent);
+    font-size: 1.1rem;
+    letter-spacing: 3px;
+  }
+  .nav-links { display: flex; gap: 2rem; list-style: none; }
+  .nav-links a {
+    color: var(--text-dim);
+    text-decoration: none;
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 600;
+    font-size: 0.85rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    transition: color 0.3s;
+  }
+  .nav-links a:hover { color: var(--accent); }
+
+  /* Hero */
+  .hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    padding: 6rem 4rem 4rem;
+    overflow: hidden;
+  }
+
+  .hero-bg-circle {
+    position: absolute;
+    right: -100px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 600px;
+    height: 600px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(0,212,255,0.05) 0%, transparent 70%);
+    border: 1px solid rgba(0,212,255,0.1);
+    animation: pulse 4s ease-in-out infinite;
+  }
+  .hero-bg-circle::before {
+    content: '';
+    position: absolute;
+    inset: 40px;
+    border-radius: 50%;
+    border: 1px solid rgba(0,212,255,0.08);
+    animation: pulse 4s ease-in-out infinite reverse;
+  }
+  .hero-bg-circle::after {
+    content: '';
+    position: absolute;
+    inset: 80px;
+    border-radius: 50%;
+    border: 1px solid rgba(0,212,255,0.05);
+  }
+  @keyframes pulse {
+    0%,100%{transform:translateY(-50%) scale(1)} 
+    50%{transform:translateY(-50%) scale(1.05)}
+  }
+
+  .hero-content { position: relative; z-index: 2; max-width: 800px; }
+
+  .hero-tag {
+    font-family: 'Share Tech Mono', monospace;
+    color: var(--accent);
+    font-size: 0.8rem;
+    letter-spacing: 4px;
+    margin-bottom: 1.5rem;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.2s forwards;
+  }
+  .hero-tag::before { content: '> '; }
+
+  .hero-name {
+    font-family: 'Exo 2', sans-serif;
+    font-weight: 900;
+    font-size: clamp(3.5rem, 8vw, 7rem);
+    line-height: 0.9;
+    letter-spacing: -2px;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.4s forwards;
+  }
+  .hero-name span { color: var(--accent); }
+
+  .hero-title {
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 300;
+    font-size: clamp(1.2rem, 3vw, 1.8rem);
+    color: var(--text-dim);
+    margin-top: 1rem;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.6s forwards;
+  }
+
+  .hero-exp {
+    margin-top: 2rem;
+    display: flex;
+    gap: 3rem;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.8s forwards;
+  }
+  .exp-item { text-align: center; }
+  .exp-num {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 2.5rem;
+    color: var(--accent);
+    display: block;
+  }
+  .exp-label {
+    font-size: 0.7rem;
+    letter-spacing: 2px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+  }
+
+  .hero-divider {
+    width: 60px;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent), transparent);
+    margin: 1.5rem 0;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.7s forwards;
+  }
+
+  .hero-desc {
+    font-size: 1rem;
+    line-height: 1.8;
+    color: var(--text-dim);
+    max-width: 600px;
+    opacity: 0;
+    animation: fadeUp 0.8s 1s forwards;
+  }
+
+  .hero-cta {
+    margin-top: 2.5rem;
+    display: flex;
+    gap: 1rem;
+    opacity: 0;
+    animation: fadeUp 0.8s 1.2s forwards;
+  }
+  .btn {
+    padding: 0.75rem 2rem;
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 700;
+    font-size: 0.85rem;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+  .btn-primary {
+    background: var(--accent);
+    color: var(--bg);
+    clip-path: polygon(8px 0, 100% 0, calc(100% - 8px) 100%, 0 100%);
+  }
+  .btn-primary:hover { background: #fff; box-shadow: 0 0 30px rgba(0,212,255,0.5); }
+  .btn-secondary {
+    background: transparent;
+    color: var(--accent);
+    border: 1px solid var(--accent);
+    clip-path: polygon(8px 0, 100% 0, calc(100% - 8px) 100%, 0 100%);
+  }
+  .btn-secondary:hover { background: rgba(0,212,255,0.1); }
+
+  @keyframes fadeUp {
+    from { opacity:0; transform:translateY(20px) }
+    to { opacity:1; transform:translateY(0) }
+  }
+
+  /* Sections */
+  section {
+    position: relative;
+    z-index: 1;
+    padding: 6rem 4rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .section-label {
+    font-family: 'Share Tech Mono', monospace;
+    color: var(--accent);
+    font-size: 0.75rem;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+  }
+  .section-title {
+    font-family: 'Exo 2', sans-serif;
+    font-weight: 900;
+    font-size: clamp(2rem, 4vw, 3.5rem);
+    line-height: 1;
+    margin-bottom: 3rem;
+  }
+  .section-title span { color: var(--accent); }
+
+  /* Skills grid */
+  .skills-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .skill-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    padding: 2rem;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s;
+    clip-path: polygon(0 0, calc(100% - 20px) 0, 100% 20px, 100% 100%, 20px 100%, 0 calc(100% - 20px));
+  }
+  .skill-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(0,212,255,0.05) 0%, transparent 60%);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  .skill-card:hover { border-color: var(--accent); box-shadow: var(--glow); }
+  .skill-card:hover::before { opacity: 1; }
+
+  .skill-icon {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+  }
+  .skill-cat {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--accent);
+    letter-spacing: 3px;
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
+  }
+  .skill-name {
+    font-family: 'Exo 2', sans-serif;
+    font-weight: 700;
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+  }
+  .skill-tags { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+  .tag {
+    background: rgba(0,212,255,0.08);
+    border: 1px solid rgba(0,212,255,0.2);
+    color: var(--accent);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.65rem;
+    padding: 0.2rem 0.6rem;
+    letter-spacing: 1px;
+  }
+  .tag.orange { background: rgba(255,107,53,0.08); border-color: rgba(255,107,53,0.3); color: var(--accent2); }
+  .tag.green { background: rgba(127,255,107,0.08); border-color: rgba(127,255,107,0.3); color: var(--accent3); }
+
+  /* Experience */
+  .exp-timeline { position: relative; }
+  .exp-timeline::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: linear-gradient(to bottom, var(--accent), transparent);
+  }
+
+  .exp-item-row {
+    padding-left: 3rem;
+    margin-bottom: 3rem;
+    position: relative;
+  }
+  .exp-item-row::before {
+    content: '';
+    position: absolute;
+    left: -4px;
+    top: 6px;
+    width: 9px;
+    height: 9px;
+    background: var(--accent);
+    border-radius: 50%;
+    box-shadow: 0 0 10px var(--accent);
+  }
+
+  .exp-period {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--accent);
+    letter-spacing: 2px;
+    margin-bottom: 0.3rem;
+  }
+  .exp-role {
+    font-family: 'Exo 2', sans-serif;
+    font-weight: 700;
+    font-size: 1.3rem;
+    margin-bottom: 0.2rem;
+  }
+  .exp-company {
+    font-size: 0.9rem;
+    color: var(--text-dim);
+    margin-bottom: 0.8rem;
+    letter-spacing: 1px;
+  }
+  .exp-desc {
+    font-size: 0.9rem;
+    line-height: 1.7;
+    color: var(--text-dim);
+  }
+
+  /* Cloud section */
+  .cloud-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+  }
+  .cloud-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    padding: 2.5rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.4s;
+  }
+  .cloud-card:hover { transform: translateY(-5px); box-shadow: var(--glow); border-color: var(--accent); }
+  .cloud-logo {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    display: block;
+  }
+  .cloud-name {
+    font-family: 'Exo 2', sans-serif;
+    font-weight: 900;
+    font-size: 1.4rem;
+    margin-bottom: 0.5rem;
+  }
+  .cloud-desc {
+    font-size: 0.8rem;
+    color: var(--text-dim);
+    line-height: 1.6;
+  }
+  .cloud-services {
+    margin-top: 1rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem;
+    justify-content: center;
+  }
+
+  /* DevOps */
+  .devops-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 1rem;
+  }
+  .devops-item {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    padding: 1.5rem 1rem;
+    text-align: center;
+    transition: all 0.3s;
+    cursor: default;
+  }
+  .devops-item:hover { border-color: var(--accent3); box-shadow: 0 0 20px rgba(127,255,107,0.1); }
+  .devops-item-icon { font-size: 1.8rem; margin-bottom: 0.5rem; }
+  .devops-item-name {
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 700;
+    font-size: 0.85rem;
+    letter-spacing: 1px;
+    color: var(--text-dim);
+  }
+
+  /* Contact */
+  .contact-section {
+    background: var(--bg2);
+  }
+  .contact-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: center;
+  }
+  .contact-info h3 {
+    font-family: 'Exo 2', sans-serif;
+    font-weight: 700;
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+  }
+  .contact-info p {
+    color: var(--text-dim);
+    line-height: 1.8;
+    margin-bottom: 2rem;
+  }
+  .contact-detail {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    color: var(--text-dim);
+  }
+  .contact-detail-icon {
+    width: 36px;
+    height: 36px;
+    background: rgba(0,212,255,0.1);
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    flex-shrink: 0;
+  }
+
+  /* Cert badges */
+  .cert-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+  }
+  .cert-badge {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    padding: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    transition: all 0.3s;
+  }
+  .cert-badge:hover { border-color: var(--accent2); box-shadow: 0 0 20px rgba(255,107,53,0.1); }
+  .cert-badge-icon {
+    font-size: 1.8rem;
+    flex-shrink: 0;
+  }
+  .cert-badge-name {
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 700;
+    font-size: 0.85rem;
+    line-height: 1.4;
+    color: var(--text-dim);
+  }
+
+  /* Footer */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 2rem 4rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    z-index: 1;
+  }
+  .footer-copy {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--text-dim);
+    letter-spacing: 2px;
+  }
+  .footer-status {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--accent3);
+  }
+  .status-dot {
+    width: 7px; height: 7px;
+    background: var(--accent3);
+    border-radius: 50%;
+    animation: blink 2s infinite;
+  }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+  @media (max-width: 768px) {
+    .hero { padding: 5rem 1.5rem 3rem; }
+    section { padding: 4rem 1.5rem; }
+    .cloud-grid { grid-template-columns: 1fr; }
+    .contact-grid { grid-template-columns: 1fr; gap: 2rem; }
+    .hero-exp { gap: 1.5rem; }
+    footer { flex-direction: column; gap: 1rem; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<div class="top-bar"></div>
+
+<nav>
+  <div class="nav-logo">NAVEEN.DEV</div>
+  <ul class="nav-links">
+    <li><a href="#skills">Skills</a></li>
+    <li><a href="#experience">Experience</a></li>
+    <li><a href="#cloud">Cloud</a></li>
+    <li><a href="#devops">DevOps</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero" style="border:none; padding-top:6rem;">
+  <div class="hero-bg-circle"></div>
+  <div class="hero-content">
+    <div class="hero-tag">MIDDLEWARE &amp; CLOUD ARCHITECT</div>
+    <h1 class="hero-name">NA<span>VEEN</span></h1>
+    <p class="hero-title">Enterprise Middleware · Cloud Infrastructure · DevOps</p>
+    <div class="hero-divider"></div>
+    <p class="hero-desc">
+      A seasoned infrastructure and middleware specialist with over 12 years of hands-on experience managing enterprise-grade application servers, cloud platforms, and modern DevOps pipelines across large-scale production environments.
+    </p>
+    <div class="hero-exp">
+      <div class="exp-item">
+        <span class="exp-num">12+</span>
+        <span class="exp-label">Years Experience</span>
+      </div>
+      <div class="exp-item">
+        <span class="exp-num">3</span>
+        <span class="exp-label">Cloud Platforms</span>
+      </div>
+      <div class="exp-item">
+        <span class="exp-num">6+</span>
+        <span class="exp-label">Middleware Stacks</span>
+      </div>
+    </div>
+    <div class="hero-cta">
+      <a href="#contact" class="btn btn-primary">Hire Me</a>
+      <a href="#experience" class="btn btn-secondary">View Experience</a>
+    </div>
+  </div>
+</section>
+
+<!-- SKILLS -->
+<section id="skills">
+  <div class="section-label">// CORE EXPERTISE</div>
+  <h2 class="section-title">Technical <span>Skills</span></h2>
+  <div class="skills-grid">
+
+    <div class="skill-card">
+      <div class="skill-icon">⚙️</div>
+      <div class="skill-cat">Middleware</div>
+      <div class="skill-name">IBM WebSphere</div>
+      <div class="skill-tags">
+        <span class="tag">WAS ND</span>
+        <span class="tag">WAS Liberty</span>
+        <span class="tag">Clustering</span>
+        <span class="tag">Cell Manager</span>
+        <span class="tag">FFDC Analysis</span>
+      </div>
+    </div>
+
+    <div class="skill-card">
+      <div class="skill-icon">🔴</div>
+      <div class="skill-cat">Middleware</div>
+      <div class="skill-name">JBoss / WildFly</div>
+      <div class="skill-tags">
+        <span class="tag">EAP 6/7</span>
+        <span class="tag">Domain Mode</span>
+        <span class="tag">Clustering</span>
+        <span class="tag">JMS</span>
+        <span class="tag">Infinispan</span>
+      </div>
+    </div>
+
+    <div class="skill-card">
+      <div class="skill-icon">☕</div>
+      <div class="skill-cat">Middleware</div>
+      <div class="skill-name">Oracle WebLogic</div>
+      <div class="skill-tags">
+        <span class="tag">12c/14c</span>
+        <span class="tag">Admin Console</span>
+        <span class="tag">WLST</span>
+        <span class="tag">Coherence</span>
+        <span class="tag">HA Clusters</span>
+      </div>
+    </div>
+
+    <div class="skill-card">
+      <div class="skill-icon">🌐</div>
+      <div class="skill-cat">Web Servers</div>
+      <div class="skill-name">Apache HTTP Server</div>
+      <div class="skill-tags">
+        <span class="tag orange">mod_proxy</span>
+        <span class="tag orange">mod_jk</span>
+        <span class="tag orange">SSL/TLS</span>
+        <span class="tag orange">Load Balancing</span>
+        <span class="tag orange">vhosts</span>
+      </div>
+    </div>
+
+    <div class="skill-card">
+      <div class="skill-icon">🐱</div>
+      <div class="skill-cat">App Server</div>
+      <div class="skill-name">Apache Tomcat</div>
+      <div class="skill-tags">
+        <span class="tag orange">Tomcat 8/9/10</span>
+        <span class="tag orange">APR</span>
+        <span class="tag orange">Session Mgmt</span>
+        <span class="tag orange">Connector Tuning</span>
+      </div>
+    </div>
+
+    <div class="skill-card">
+      <div class="skill-icon">🔷</div>
+      <div class="skill-cat">Web Server</div>
+      <div class="skill-name">IBM HTTP Server</div>
+      <div class="skill-tags">
+        <span class="tag">IHS Plugin</span>
+        <span class="tag">WebSphere Proxy</span>
+        <span class="tag">SSL Mgmt</span>
+        <span class="tag">Key Management</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- EXPERIENCE -->
+<section id="experience">
+  <div class="section-label">// CAREER JOURNEY</div>
+  <h2 class="section-title">Work <span>Experience</span></h2>
+  <div class="exp-timeline">
+
+    <div class="exp-item-row">
+      <div class="exp-period">2020 — PRESENT</div>
+      <div class="exp-role">Senior Middleware & Cloud Infrastructure Engineer</div>
+      <div class="exp-company">Enterprise Technology Solutions</div>
+      <div class="exp-desc">
+        Lead middleware infrastructure upgrades and migrations across WebSphere, JBoss, and WebLogic environments. Architect hybrid cloud deployments across AWS, Azure, and GCP. Define CI/CD pipelines and implement DevOps best practices. Manage high-availability clustered environments with zero-downtime deployments.
+      </div>
+    </div>
+
+    <div class="exp-item-row">
+      <div class="exp-period">2016 — 2020</div>
+      <div class="exp-role">Middleware Application Server Engineer</div>
+      <div class="exp-company">Global IT Services Inc.</div>
+      <div class="exp-desc">
+        Administered WebSphere Application Server, JBoss EAP, and Oracle WebLogic in production environments. Configured Apache HTTP/IHS web servers and load balancers. Performed JVM tuning, GC analysis, and thread dump diagnostics. Developed automation scripts for deployments and health monitoring.
+      </div>
+    </div>
+
+    <div class="exp-item-row">
+      <div class="exp-period">2013 — 2016</div>
+      <div class="exp-role">Systems & Middleware Administrator</div>
+      <div class="exp-company">Technology Infrastructure Corp.</div>
+      <div class="exp-desc">
+        Managed Apache Tomcat and IBM HTTP Server installations and configurations. Supported WebSphere ND cell administration and application deployments. Monitored server performance using IBM tools and handled incident resolution for production issues.
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- CLOUD -->
+<section id="cloud">
+  <div class="section-label">// CLOUD PLATFORMS</div>
+  <h2 class="section-title">Cloud <span>Expertise</span></h2>
+  <div class="cloud-grid">
+
+    <div class="cloud-card">
+      <span class="cloud-logo">☁️</span>
+      <div class="cloud-name">Amazon AWS</div>
+      <div class="cloud-desc">Extensive experience designing and managing scalable AWS cloud infrastructure</div>
+      <div class="cloud-services">
+        <span class="tag">EC2</span>
+        <span class="tag">ECS/EKS</span>
+        <span class="tag">RDS</span>
+        <span class="tag">S3</span>
+        <span class="tag">CloudWatch</span>
+        <span class="tag">ALB/NLB</span>
+        <span class="tag">Lambda</span>
+        <span class="tag">VPC</span>
+      </div>
+    </div>
+
+    <div class="cloud-card">
+      <span class="cloud-logo">🔵</span>
+      <div class="cloud-name">Microsoft Azure</div>
+      <div class="cloud-desc">Deploying and managing enterprise workloads on Azure cloud services</div>
+      <div class="cloud-services">
+        <span class="tag orange">AKS</span>
+        <span class="tag orange">App Service</span>
+        <span class="tag orange">Azure VM</span>
+        <span class="tag orange">DevOps</span>
+        <span class="tag orange">Key Vault</span>
+        <span class="tag orange">ARM</span>
+      </div>
+    </div>
+
+    <div class="cloud-card">
+      <span class="cloud-logo">🟢</span>
+      <div class="cloud-name">Google GCP</div>
+      <div class="cloud-desc">Building and maintaining cloud-native solutions on Google Cloud Platform</div>
+      <div class="cloud-services">
+        <span class="tag green">GKE</span>
+        <span class="tag green">Compute Engine</span>
+        <span class="tag green">Cloud Run</span>
+        <span class="tag green">GCS</span>
+        <span class="tag green">Pub/Sub</span>
+        <span class="tag green">Cloud SQL</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- DEVOPS -->
+<section id="devops">
+  <div class="section-label">// DEVOPS TOOLCHAIN</div>
+  <h2 class="section-title">DevOps <span>Tools</span></h2>
+  <div class="devops-grid">
+    <div class="devops-item"><div class="devops-item-icon">🐳</div><div class="devops-item-name">Docker</div></div>
+    <div class="devops-item"><div class="devops-item-icon">☸️</div><div class="devops-item-name">Kubernetes</div></div>
+    <div class="devops-item"><div class="devops-item-icon">🔧</div><div class="devops-item-name">Jenkins</div></div>
+    <div class="devops-item"><div class="devops-item-icon">🦊</div><div class="devops-item-name">GitLab CI</div></div>
+    <div class="devops-item"><div class="devops-item-icon">🅰️</div><div class="devops-item-name">Ansible</div></div>
+    <div class="devops-item"><div class="devops-item-icon">🏗️</div><div class="devops-item-name">Terraform</div></div>
+    <div class="devops-item"><div class="devops-item-icon">🐙</div><div class="devops-item-name">GitHub Actions</div></div>
+    <div class="devops-item"><div class="devops-item-icon">📊</div><div class="devops-item-name">Grafana</div></div>
+    <div class="devops-item"><div class="devops-item-icon">🔍</div><div class="devops-item-name">Prometheus</div></div>
+    <div class="devops-item"><div class="devops-item-icon">🪵</div><div class="devops-item-name">ELK Stack</div></div>
+    <div class="devops-item"><div class="devops-item-icon">🐦</div><div class="devops-item-name">Maven</div></div>
+    <div class="devops-item"><div class="devops-item-icon">🔀</div><div class="devops-item-name">Git</div></div>
+  </div>
+
+  <div style="margin-top:3rem;">
+    <div class="section-label" style="margin-bottom:1.5rem;">// CERTIFICATIONS & TRAINING</div>
+    <div class="cert-grid">
+      <div class="cert-badge"><div class="cert-badge-icon">☁️</div><div class="cert-badge-name">AWS Certified Solutions Architect</div></div>
+      <div class="cert-badge"><div class="cert-badge-icon">🔵</div><div class="cert-badge-name">Microsoft Azure Administrator</div></div>
+      <div class="cert-badge"><div class="cert-badge-icon">☸️</div><div class="cert-badge-name">Certified Kubernetes Administrator</div></div>
+      <div class="cert-badge"><div class="cert-badge-icon">🔷</div><div class="cert-badge-name">IBM WebSphere Administration</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact" class="contact-section">
+  <div class="section-label">// GET IN TOUCH</div>
+  <h2 class="section-title">Let's <span>Connect</span></h2>
+  <div class="contact-grid">
+    <div class="contact-info">
+      <h3>Open for Opportunities</h3>
+      <p>
+        With 12+ years of expertise in enterprise middleware, cloud platforms, and DevOps, I bring deep technical knowledge and a track record of delivering robust, scalable infrastructure solutions for large organizations.
+      </p>
+      <div class="contact-detail">
+        <div class="contact-detail-icon">📧</div>
+        <span>naveen@email.com</span>
+      </div>
+      <div class="contact-detail">
+        <div class="contact-detail-icon">📱</div>
+        <span>+91 XXXXX XXXXX</span>
+      </div>
+      <div class="contact-detail">
+        <div class="contact-detail-icon">📍</div>
+        <span>India (Open to Remote / Relocation)</span>
+      </div>
+      <div class="contact-detail">
+        <div class="contact-detail-icon">💼</div>
+        <span>linkedin.com/in/naveen</span>
+      </div>
+    </div>
+    <div>
+      <div style="background:var(--bg);border:1px solid var(--border);padding:2.5rem;">
+        <div class="section-label" style="margin-bottom:1.5rem;">// KEY STRENGTHS</div>
+        <div style="display:flex;flex-direction:column;gap:1rem;">
+          <div style="display:flex;gap:1rem;align-items:flex-start;">
+            <span style="color:var(--accent);font-size:1.2rem;flex-shrink:0;">▸</span>
+            <div><strong style="font-family:'Exo 2';font-weight:700;">Enterprise Middleware Mastery</strong><br><span style="color:var(--text-dim);font-size:0.85rem;">Deep expertise across WebSphere, JBoss, WebLogic, Tomcat, and IHS</span></div>
+          </div>
+          <div style="display:flex;gap:1rem;align-items:flex-start;">
+            <span style="color:var(--accent);font-size:1.2rem;flex-shrink:0;">▸</span>
+            <div><strong style="font-family:'Exo 2';font-weight:700;">Multi-Cloud Architecture</strong><br><span style="color:var(--text-dim);font-size:0.85rem;">Designing and managing workloads across AWS, Azure, and GCP</span></div>
+          </div>
+          <div style="display:flex;gap:1rem;align-items:flex-start;">
+            <span style="color:var(--accent);font-size:1.2rem;flex-shrink:0;">▸</span>
+            <div><strong style="font-family:'Exo 2';font-weight:700;">DevOps & Automation</strong><br><span style="color:var(--text-dim);font-size:0.85rem;">Building CI/CD pipelines, IaC, containerization, and monitoring solutions</span></div>
+          </div>
+          <div style="display:flex;gap:1rem;align-items:flex-start;">
+            <span style="color:var(--accent);font-size:1.2rem;flex-shrink:0;">▸</span>
+            <div><strong style="font-family:'Exo 2';font-weight:700;">High Availability & Performance</strong><br><span style="color:var(--text-dim);font-size:0.85rem;">Tuning, clustering, and ensuring 99.9%+ uptime on mission-critical systems</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-copy">© 2024 NAVEEN — MIDDLEWARE & CLOUD EXPERT</div>
+  <div class="footer-status"><div class="status-dot"></div> AVAILABLE FOR WORK</div>
+</footer>
+
+</body>
+</html>
